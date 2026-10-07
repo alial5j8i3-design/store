@@ -214,13 +214,14 @@ const io = new Server(server, {
   },
 
   transports: ["polling", "websocket"],
-allowRequest: (request, callback) => {
-  console.log("[socket origin]", request.headers.origin);
-  console.log("[allowed origins]", [...allowedSocketOrigins]);
 
-  callback(null, socketOriginAllowed(request.headers.origin));
-},
+  allowRequest: (request, callback) => {
+    console.log("[socket origin]", request.headers.origin);
+    console.log("[allowed origins]", [...allowedSocketOrigins]);
 
+    callback(null, socketOriginAllowed(request.headers.origin));
+  },
+});
 
 // Redis clients created for the Socket.IO adapter; closed on shutdown.
 const adapterClients = [];
