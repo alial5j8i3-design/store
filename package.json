@@ -7,9 +7,9 @@
     "node": ">=18"
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "pm2-runtime start ecosystem.config.js --env production",
     "dev": "node server.js",
-    "build": "echo 'build: not configured (no build step in this project)' && exit 1",
+    "build": "echo \"No build required\"",
     "lint": "echo 'lint: not configured (no linter in this project)' && exit 1",
     "test": "node tests/phase1/mock_models.test.js && node tests/env_check.test.js && node tests/indexes.test.js && node tests/phase1/store_and_product_ownership.test.js && node tests/phase1/auth_middleware.test.js && node tests/phase1/http_routes.test.js && node tests/phase1/migration_and_ai.test.js && node tests/phase1/public_store.test.js && node tests/phase1/security_config_and_registration.test.js && node tests/phase1/order_and_stock_guardrails.test.js && node tests/phase1/schema_and_validation.test.js && node tests/phase1/activation_and_reviews.test.js && node tests/phase1/rate_limit.test.js && node tests/phase1/realtime_and_cache.test.js && node tests/phase1/cache_epoch.test.js && node tests/phase1/ai_security.test.js && node tests/phase1/ai_tools_security.test.js && node tests/phase1/privacy_archive_ticket.test.js",
     "test:infra": "node tests/phase1/mock_models.test.js",
