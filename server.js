@@ -213,7 +213,7 @@ const io = new Server(server, {
     credentials: true,
   },
 
-  transports: ["websocket"],
+  transports: ["polling", "websocket"],
   allowRequest: (request, callback) => callback(null, socketOriginAllowed(request.headers.origin)),
 });
 
