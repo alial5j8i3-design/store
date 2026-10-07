@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سوق مكسب | منصة التجارة الإلكترونية للمنتجات مكسب</title>
+  <meta name="description" content="منصة متطورة على طراز أمازون لبيع وشراء المنتجات مكسب المضمونة والمفحوصة مع بائعين معتمدين وشحن سريع.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+</head>
+<body>
+
+  <div data-site-header></div>
+
+  <!-- Main Marketplace Body -->
+  <main class="marketplace-page">
+    <!-- Hero Banner Strip -->
+    <section class="home-banner-strip">
+      <div class="container">
+        <div class="banner-content-grid">
+          <div class="banner-text-box">
+            <h1>سوق مكسب الأكبر والموثوق في المنطقة</h1>
+            <p>منصة متكاملة بين المشترين والبائعين المعتمدين للأجهزة الإلكترونية، المفروشات، المقتنيات النادرة والمعدات المفحوصة بأفضل الأسعار.</p>
+            <div class="banner-actions">
+              <a href="/products.html" class="button btn-accent">تسوق جميع المنتجات</a>
+              <a href="/profile.html" class="button btn-secondary">انضم كبائع معتمد</a>
+            </div>
+          </div>
+          <div class="banner-badge-box">
+            <div class="badge-num">%100</div>
+            <div class="badge-sub">فحص ومراجعة يدوية للبائعين</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="container">
+      <!-- Trust Bar -->
+      <section class="trust-bar">
+        <div class="trust-item">
+          <i class="fa-solid fa-shield-halved"></i>
+          <div>
+            <strong>بائعون معتمدون</strong>
+            <span>مراجعة بيانات كل بائع وتوثيقه</span>
+          </div>
+        </div>
+        <div class="trust-item">
+          <i class="fa-solid fa-truck-fast"></i>
+          <div>
+            <strong>تنسيق تسليم سريع</strong>
+            <span>تواصل وموقع GPS مباشر</span>
+          </div>
+        </div>
+        <div class="trust-item">
+          <i class="fa-solid fa-tags"></i>
+          <div>
+            <strong>كوبونات وخصومات دورية</strong>
+            <span>توفير إضافي عند إتمام الطلب</span>
+          </div>
+        </div>
+        <div class="trust-item">
+          <i class="fa-solid fa-headset"></i>
+          <div>
+            <strong>تحديثات فورية للطلبات</strong>
+            <span>إشعارات فورية بكل تحديث</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Category Bento Shortcuts -->
+      <section class="category-bento-grid" id="category-bento-area">
+        <!-- Loaded via JS -->
+      </section>
+
+      <!-- Marketplace Section Shelf: Latest Products -->
+      <section class="marketplace-shelf">
+        <div class="shelf-header">
+          <div class="shelf-title-wrap">
+            <h2 class="shelf-title">أحدث المنتجات المعروضة للبيع</h2>
+            <span class="shelf-subtitle">تم فحصها وإضافتها حديثاً من قبل البائعين المعتمدين</span>
+          </div>
+          <a href="/products.html" class="shelf-view-all">مشاهدة الكل &larr;</a>
+        </div>
+
+        <div class="product-grid" id="home-products-grid">
+          <!-- Skeletons while loading -->
+          <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div><div class="skeleton-text price"></div></div>
+          <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div><div class="skeleton-text price"></div></div>
+          <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div><div class="skeleton-text price"></div></div>
+          <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div><div class="skeleton-text price"></div></div>
+          <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div><div class="skeleton-text price"></div></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Amazon-style Comprehensive Footer -->
+  <div data-site-footer></div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    async function loadHomeData() {
+      // 2. Load Sections
+      const secRes = await App.fetchAPI('/api/get_all_sections');
+      const bentoArea = document.getElementById('category-bento-area');
+
+      if (secRes.ok && Array.isArray(secRes.data) && secRes.data.length > 0) {
+        // Category tiles: 2x2 mosaic of real products from each section
+        const allRes = await App.fetchAPI('/api/get_products?limit=40&page=1');
+        const pool = (allRes.ok && Array.isArray(allRes.data)) ? allRes.data : [];
+        bentoArea.innerHTML = secRes.data.slice(0, 4).map(sec => {
+          const imgs = pool.filter(p => p.section && p.section.name === sec.name)
+            .map(p => (Array.isArray(p.images) && p.images[0]) || p.image).filter(Boolean).slice(0, 4);
+          const cells = [0, 1, 2, 3].map(i => imgs[i]
+            ? `<div class="bento-mosaic-cell"><img src="${App.escapeHtml(imgs[i])}" alt="" loading="lazy" onerror="this.remove()"></div>`
+            : `<div class="bento-mosaic-cell"><i class="fa-regular fa-image"></i></div>`).join('');
+          return `
+            <a href="/products.html?section=${encodeURIComponent(sec.name)}" class="bento-card">
+              <div>
+                <h3>${App.escapeHtml(sec.name)}</h3>
+                <div class="bento-mosaic">${cells}</div>
+              </div>
+              <span class="bento-link">تسوق ${App.escapeHtml(sec.name)}</span>
+            </a>`;
+        }).join('');
+      }
+
+      // 3. Load Products
+      const prodRes = await App.fetchAPI('/api/get_products?limit=10&page=1');
+      const prodContainer = document.getElementById('home-products-grid');
+
+      if (prodRes.ok && Array.isArray(prodRes.data) && prodRes.data.length > 0) {
+        prodContainer.innerHTML = prodRes.data.map(App.productCard).join('');
+      } else {
+        prodContainer.innerHTML = `
+          <div class="empty-state-box" style="grid-column: 1 / -1;">
+            <i class="fa-solid fa-box-open empty-state-icon"></i>
+            <h2>لا توجد منتجات معروضة حالياً</h2>
+            <p>كن أول من يضيف سلعة مكسب مفحوصة في المنصة!</p>
+            <a href="/profile.html" class="button btn-accent">انضم كبائع الآن</a>
+          </div>
+        `;
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadHomeData);
+    window.addEventListener('market:new_product', () => loadHomeData());
+  </script>
+</body>
+</html>
