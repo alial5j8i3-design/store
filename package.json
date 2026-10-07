@@ -1,0 +1,45 @@
+{
+  "name": "store system saas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "echo 'build: not configured (no build step in this project)' && exit 1",
+    "lint": "echo 'lint: not configured (no linter in this project)' && exit 1",
+    "test": "node tests/phase1/mock_models.test.js && node tests/env_check.test.js && node tests/indexes.test.js && node tests/phase1/store_and_product_ownership.test.js && node tests/phase1/auth_middleware.test.js && node tests/phase1/http_routes.test.js && node tests/phase1/migration_and_ai.test.js && node tests/phase1/public_store.test.js && node tests/phase1/security_config_and_registration.test.js && node tests/phase1/order_and_stock_guardrails.test.js && node tests/phase1/schema_and_validation.test.js && node tests/phase1/activation_and_reviews.test.js && node tests/phase1/rate_limit.test.js && node tests/phase1/realtime_and_cache.test.js && node tests/phase1/cache_epoch.test.js && node tests/phase1/ai_security.test.js && node tests/phase1/ai_tools_security.test.js && node tests/phase1/privacy_archive_ticket.test.js",
+    "test:infra": "node tests/phase1/mock_models.test.js",
+    "test:integration": "node tests/integration/real_mongoose.test.js",
+    "sync:indexes": "node scripts/sync_indexes.js",
+    "report:invalid-urls": "node scripts/report_invalid_urls.js",
+    "migrate:phase1:dry": "node scripts/migrate_phase1.js --dry-run",
+    "migrate:phase1": "node scripts/migrate_phase1.js",
+    "migrate:store-slugs": "node scripts/migrate_store_slugs.js"
+  },
+  "dependencies": {
+    "@socket.io/redis-adapter": "^8.3.0",
+    "bcrypt": "^6.0.0",
+    "compression": "^1.8.1",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^8.6.1",
+    "helmet": "^8.3.0",
+    "ioredis": "^5.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.2.0",
+    "node-cache": "^5.1.2",
+    "pm2": "^7.0.4",
+    "rate-limit-redis": "^6.0.1",
+    "socket.io": "^4.7.4"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^10.4.3",
+    "nodemon": "^3.1.0"
+  }
+}
