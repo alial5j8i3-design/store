@@ -23,7 +23,7 @@ const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 50;
 
 const PRODUCT_FIELDS =
-    "name description price discount final_price images section quantity createdAt seller_id store_id";
+    "name description price discount final_price images section quantity createdAt seller_id store_id reviews.rating";
 
 const get_products = async (req, res) => {
     try {
@@ -83,8 +83,19 @@ const get_products = async (req, res) => {
         const data = rows.map(({ seller_id, store_id, reviews, ...product }) => {
             const seller = seller_by_id.get(String(seller_id)) || {};
             const owner_store = store_by_id.get(String(store_id)) || {};
+
+            const ratings = (Array.isArray(reviews) ? reviews : [])
+                .map((r) => Number(r.rating))
+                .filter((v) => v > 0 && v <= 5);
+            const reviews_count = ratings.length;
+            const avg_rating = reviews_count
+                ? Math.round((ratings.reduce((s, v) => s + v, 0) / reviews_count) * 10) / 10
+                : 0;
+
             return {
                 ...product,
+                avg_rating,
+                reviews_count,
                 seller_name: seller.name || "",
                 store_slug: owner_store.slug || "",
                 seller_phone: owner_store.store_phone || "",
