@@ -82,21 +82,21 @@ const log_in = async (req, res) => {
 
         const token = signToken({ id: find_log_in_user._id });
 
-        // FIX: was setting secure:false unconditionally here, while
-        // other places setting/clearing this same cookie used (or
-        // should use) an environment-aware value. Using the shared
-        // COOKIE_OPTIONS guarantees every controller that touches the
-        // "token" cookie agrees on the same options, so log_out's
+        // Shared COOKIE_OPTIONS guarantees every controller that touches
+        // the "token" cookie agrees on the same options, so log_out's
         // clearCookie() actually matches and removes it.
         res.cookie("token", token, {
             ...COOKIE_OPTIONS,
             maxAge: COOKIE_MAX_AGE_MS
         });
 
+        // `token` is also returned in the body so the frontend can keep a
+        // Bearer fallback and stay signed in if it fails over to another
+        // server/domain, where the cookie is never sent.
         return res.status(200).json({
             success: true,
             message: "Log in successful",
-            token,
+            token
         })
     }
     catch (e) {
