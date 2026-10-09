@@ -1,9 +1,14 @@
 const { jwtExpiresInSeconds } = require("../utils/jwt");
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const COOKIE_OPTIONS = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax"
+    // sameSite "none" requires secure: true, so it is only used in production (HTTPS).
+    // Needed because the frontend (GitHub Pages) and the API (Railway) are on different sites.
+    // On local http development we keep "lax" because browsers reject "none" without secure.
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax"
 };
 
 // maxAge only applies when SETTING the cookie (log_in/register/
