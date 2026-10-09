@@ -14,7 +14,7 @@
 const jwt = require("jsonwebtoken");
 
 const ALGORITHM = "HS256";
-const DEFAULT_EXPIRES_IN_SECONDS = 1 * 60; // 30 days (previous value)
+const DEFAULT_EXPIRES_IN_SECONDS = 30 * 24 * 60 * 60; // 30 days (previous value)
 
 const UNIT_SECONDS = { s: 1, m: 60, h: 60 * 60, d: 24 * 60 * 60, w: 7 * 24 * 60 * 60 };
 
