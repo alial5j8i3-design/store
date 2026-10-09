@@ -1,15 +1,15 @@
 require("dotenv").config();
 
 const { verifyToken } = require("../utils/jwt");
+const { extract_token } = require("../utils/request_token");
 const mongoose = require("mongoose");
 const users = require("../models/users");
 
 const auth_me = async (req, res) => {
     try {
 
-
-        const token = req.cookies && req.cookies.token;
-
+        // Cookie first, then Authorization: Bearer (see request_token.js).
+        const token = extract_token(req);
 
         if (!token) {
             return res.status(401).json({
@@ -47,7 +47,6 @@ const auth_me = async (req, res) => {
             });
         }
 
-
         return res.status(200).json({
             authenticated: true,
             message: "User is authenticated",
@@ -55,10 +54,10 @@ const auth_me = async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role:user.role,
-                phone_number:user.phone_number,
-                GPS_URL:user.GPS_URL,
-                whatsApp_number:user.whatsApp_number,
+                role: user.role,
+                phone_number: user.phone_number,
+                GPS_URL: user.GPS_URL,
+                whatsApp_number: user.whatsApp_number,
             }
         });
 
