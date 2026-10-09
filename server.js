@@ -516,6 +516,41 @@ const public_store = require("./routes/public_store.router");
 
 const ticket_router = require("./routes/ticket.router");
 
+/*
+ * =========================================
+ * /healthy  (فحص صحة السيرفر - الفرونت اند بيستخدمه للتحويل بين السيرفرات)
+ * 200 = سليم | 503 = مزدحم / MongoDB واقع / السيرفر بيقفل
+ * =========================================
+ */
+const { monitorEventLoopDelay } = require("perf_hooks");
+const loopDelay = monitorEventLoopDelay({ resolution: 20 });
+loopDelay.enable();
+let loopLagMs = 0;
+setInterval(() => {
+  loopLagMs = loopDelay.percentile(99) / 1e6;
+  loopDelay.reset();
+}, 5000).unref();
+
+let shuttingDown = false;
+process.once("SIGTERM", () => { shuttingDown = true; });
+process.once("SIGINT", () => { shuttingDown = true; });
+
+app.get("/healthy", (req, res) => {
+  const mongoOk = mongoose.connection.readyState === 1;
+  let status = "ok";
+  if (shuttingDown) status = "shutting_down";
+  else if (!mongoOk) status = "db_down";
+  else if (loopLagMs > 250) status = "busy";
+
+  res.set("Cache-Control", "no-store");
+  res.status(status === "ok" ? 200 : 503).json({
+    status,
+    mongo: mongoOk,
+    event_loop_lag_ms: Math.round(loopLagMs),
+    sockets: io.engine.clientsCount,
+  });
+});
+
 app.use(auth_me_router);
 
 app.use(register);
