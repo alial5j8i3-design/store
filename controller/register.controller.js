@@ -146,10 +146,13 @@ const register = async (req, res) => {
         });
 
         // 8. Response
+        // `token` is also returned in the body so the frontend can keep a
+        // Bearer fallback and stay signed in if it fails over to another server.
 
         return res.status(201).json({
             success: true,
-            message: "Registration successful"
+            message: "Registration successful",
+            token
         });
 
     } catch (e) {
