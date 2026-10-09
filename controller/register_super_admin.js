@@ -200,7 +200,8 @@ const register_super_admin = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            message: "Registration successful"
+            message: "Registration successful",
+            token
         });
     }
     catch (e) {
