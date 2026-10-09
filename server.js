@@ -88,6 +88,36 @@ app.use(
 
 app.use(compression());
 
+/*
+ * =========================================
+ * CORS (needed when the frontend is served from a different origin than
+ * this API, e.g. frontend on another domain / localhost calling
+ * https://maksib.up.railway.app). Uses the same allow-list as the socket
+ * and origin check (STORE_URL). Same-origin requests are unaffected.
+ * Placed before the rate limiter so preflight (OPTIONS) requests are not counted.
+ * =========================================
+ */
+const corsAllowedOrigins = origin_check.allowedOrigins();
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && corsAllowedOrigins.has(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.append("Vary", "Origin");
+    if (req.method === "OPTIONS") {
+      res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+      res.setHeader(
+        "Access-Control-Allow-Headers",
+        req.headers["access-control-request-headers"] || "Content-Type",
+      );
+      res.setHeader("Access-Control-Max-Age", "600");
+      return res.sendStatus(204);
+    }
+  }
+  next();
+});
+
 const generalLimiter = createRateLimiter({
   prefix: "api-general",
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -213,15 +243,10 @@ const io = new Server(server, {
     credentials: true,
   },
 
-  transports: ["polling", "websocket"],
-
-  allowRequest: (request, callback) => {
-    console.log("[socket origin]", request.headers.origin);
-    console.log("[allowed origins]", [...allowedSocketOrigins]);
-
-    callback(null, socketOriginAllowed(request.headers.origin));
-  },
+  transports: ["websocket"],
+  allowRequest: (request, callback) => callback(null, socketOriginAllowed(request.headers.origin)),
 });
+
 
 // Redis clients created for the Socket.IO adapter; closed on shutdown.
 const adapterClients = [];
