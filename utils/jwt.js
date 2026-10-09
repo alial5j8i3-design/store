@@ -10,7 +10,7 @@
 // Lifetime: JWT_EXPIRES_IN (e.g. "7d", "12h", "30m", "3600" = seconds).
 // When it is NOT set, the previous behaviour (30 days) is kept so that
 // deploying this change does not silently shorten anyone's session.
-// Recommended for production: JWT_EXPIRES_IN=7d.
+// Recommended for production: JWT_EXPIRES_IN=7d
 const jwt = require("jsonwebtoken");
 
 const ALGORITHM = "HS256";
