@@ -510,6 +510,8 @@ const seller_store = require("./routes/seller_store.router");
 
 const admin_store = require("./routes/admin_store.router");
 
+const admin_orders = require("./routes/admin_orders.router");
+
 const public_store = require("./routes/public_store.router");
 
 const ticket_router = require("./routes/ticket.router");
@@ -573,6 +575,8 @@ app.use(update_product)
 app.use(seller_store);
 
 app.use(admin_store);
+
+app.use(admin_orders);
 
 app.use(public_store);
 
